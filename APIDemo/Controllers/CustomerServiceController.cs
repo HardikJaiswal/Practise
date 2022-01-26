@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using APIDemo.IContracts;
 
-namespace BankApplicationAPI.Controllers
+namespace APIDemo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -36,8 +36,7 @@ namespace BankApplicationAPI.Controllers
                 return NotFound("Account Number not provided");
         }
 
-        [HttpPatch("accountNumber={accountNumber}&amount={amount}")]
-        [Route("Deposit")]
+        [HttpPatch("Demposit/accountNumber={accountNumber}&amount={amount}")]
         public IActionResult MoneyDepositRequest(int accountNumber, int amount)
         {
             if (accountNumber != 0 && _accountHolderService.IsAmountAvailable(accountNumber,amount))

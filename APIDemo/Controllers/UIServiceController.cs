@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using APIDemo.IContracts;
 using APIDemo.Models;
 
-namespace BankApplicationAPI.Controllers
+namespace APIDemo.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UIServiceController : ControllerBase
     {

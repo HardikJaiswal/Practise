@@ -24,11 +24,16 @@ namespace APIDemo
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            //base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<AccountHolder>()
                 .HasAlternateKey(a => a.AccountNumber);
             modelBuilder.Entity<Currency>()
                 .HasKey(c => new { c.Name, c.BankId });
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseSqlServer("Data Source=GIDEON;Initial Catalog=ApiDemo;Integrated Security=True");
         }
     }
 }

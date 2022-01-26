@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using APIDemo.IContracts;
 
-namespace BankApplicationAPI.Controllers
+namespace APIDemo.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
