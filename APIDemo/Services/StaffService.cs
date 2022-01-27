@@ -1,5 +1,6 @@
 ﻿using APIDemo.IContracts;
 using APIDemo.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace APIDemo.Services
 {
@@ -8,7 +9,7 @@ namespace APIDemo.Services
         public (string Id, string password) CreateAccount(string name)
         {
             int accNum = GenerateAccountNumber();
-            while (CustomerService.IsAccountValid(accNum)) accNum = GenerateAccountNumber();
+            while (CustomerService.GetAccount(accNum)!=null) accNum = GenerateAccountNumber();
             AccountHolder holder = new AccountHolder()
             {
                 Name = name,
@@ -45,7 +46,7 @@ namespace APIDemo.Services
 
         public List<Transaction> GetTransactionHistory(int accountNumber)
         {
-            if (CustomerService.IsAccountValid(accountNumber))
+            if (CustomerService.GetAccount(accountNumber)!=null)
             {
                 using (var context = new ApiDemoContext())
                 {
@@ -59,20 +60,51 @@ namespace APIDemo.Services
         {
             using(var context = new ApiDemoContext())
             {
-                return (context.Currencies.Any(t => t.Name == name));
+                return context.Currencies.Any(t => t.Name == name);
             }
         }
 
         public void UpdateAccountStatus(int accountNumber)
         {
-            if (CustomerService.IsAccountValid(accountNumber))
+            var user = CustomerService.GetAccount(accountNumber);
+            if (user != null)
             {
+                user.IsActive = !user.IsActive;
                 using(var context = new ApiDemoContext())
                 {
-                    var account = context.Accounts.FirstOrDefault(a => a.AccountNumber == accountNumber);
-                    account.IsActive = !account.IsActive;
+                    context.Entry(user).State = EntityState.Modified;
                     context.SaveChanges();
                 }
+            }
+        }
+
+        public bool IsTransferReverted(Transaction transaction)
+        {
+            using(var context = new ApiDemoContext())
+            {
+                if(transaction != null && context.Transactions.Any(t => t.Id == transaction.Id))
+                {
+                    var srcUser = CustomerService.GetAccount(transaction.SrcAcc);
+                    var destUser = CustomerService.GetAccount(transaction.DestAcc);
+                    if(srcUser != null && destUser != null)
+                    {
+                        srcUser.Amount += transaction.Amount; 
+                        destUser.Amount-= transaction.Amount;
+                        context.Entry(srcUser).State = EntityState.Modified;
+                        context.Entry(destUser).State = EntityState.Modified;
+                        Transaction reverted = new Transaction()
+                        {
+                            Id = Utilities.GenerateTransactionId(),
+                            SrcAcc = transaction.DestAcc,
+                            DestAcc = transaction.SrcAcc,
+                            TrasanctionType = TransactionType.RevertedTransfer
+                        };
+                        context.Transactions.Add(reverted);
+                        context.SaveChanges();
+                        return true;
+                    }
+                }
+                return false;
             }
         }
     }

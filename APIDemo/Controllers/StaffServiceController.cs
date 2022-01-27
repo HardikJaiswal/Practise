@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using APIDemo.IContracts;
+using APIDemo.Models;
 
 namespace APIDemo.Controllers
 {
@@ -15,20 +16,18 @@ namespace APIDemo.Controllers
             _staffService = staffService;
         }
 
-        //[HttpPut]
-        //public IActionResult PutRequest(PutRequestForStaffController putTypeForStaffController)
-        //{
-        //    switch (putTypeForStaffController)
-        //    {
-        //        case PutRequestForStaffController.IsTransferReverted:
-        //            if (_staffService.IsTransferReverted(new Transaction("knskndk",41,TransactionType.Transfer)))
-        //                return Ok("Transaction Reverted Successfully");
-        //            else
-        //                return BadRequest("Some Error occured");
-        //        default: 
-        //            return NotFound("No such type of request ");
-        //    }
-        //}
+        [HttpPatch("revertTransfer")]
+        public IActionResult RevertTransferRequest([FromBody]Transaction transaction)
+        {
+            if (_staffService.IsTransferReverted(transaction))
+            {
+                return Ok("Transfer Reverted Successfully.");
+            }
+            else
+            {
+                return BadRequest("The transaction was not found.");
+            }
+        }
 
         [HttpPatch("updatestatus/{accountNumber}")]
         public IActionResult UpdateStatusRequest(int accountNumber)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using APIDemo.IContracts;
+using APIDemo.Models;
 
 namespace APIDemo.Controllers
 {
@@ -39,7 +40,7 @@ namespace APIDemo.Controllers
         [HttpPatch("Demposit/accountNumber={accountNumber}&amount={amount}")]
         public IActionResult MoneyDepositRequest(int accountNumber, int amount)
         {
-            if (accountNumber != 0 && _accountHolderService.IsAmountAvailable(accountNumber,amount))
+            if (accountNumber != 0 )
             {
                 _accountHolderService.DepositMoney(accountNumber, amount);
                 return Ok("Withdrawl successful");
@@ -48,5 +49,19 @@ namespace APIDemo.Controllers
                 return NotFound("AccountNumber not provided");
         }
 
+        [HttpPatch("TranferMoney")]
+        public IActionResult MoneyTransferRequest([FromBody] int srcAcc,[FromBody] int destAcc,[FromBody] string srcBankId
+            ,[FromBody] string destBankId,[FromBody] TransferMode mode,[FromBody] double amount)
+        {
+            if(srcAcc != 0 && destAcc!=0 && srcBankId!=null && destBankId!=null && amount != 0)
+            {
+                _accountHolderService.TransferMoney(srcAcc, destAcc, amount, srcBankId, destBankId, mode);
+                return Ok("Money transferred successfully");
+            }
+            else
+            {
+                return BadRequest("Parameters were not provided correctly.");
+            }
+        }
     }
 }

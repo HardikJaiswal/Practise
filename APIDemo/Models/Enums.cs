@@ -4,7 +4,8 @@
     {
         Deposit,
         Withdrawl,
-        Transfer
+        Transfer,
+        RevertedTransfer
     }
 
     public enum Gender
@@ -18,5 +19,11 @@
     {
         AccounHolder,
         BankStaff
+    }
+
+    public enum TransferMode
+    {
+        IMPS,
+        RTGS
     }
 }

@@ -5,7 +5,7 @@ namespace APIDemo.Models
     public class AccountHolder : User
     {
         
-        public int Amount { get; set; }
+        public double Amount { get; set; }
 
         public int AccountNumber { get; set; }
 

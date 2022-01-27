@@ -13,5 +13,7 @@ namespace APIDemo.IContracts
         bool IsCurrencyAvailable(string name);
 
         void UpdateAccountStatus(int accountNumber);
+
+        bool IsTransferReverted(Transaction transaction);
     }
 }

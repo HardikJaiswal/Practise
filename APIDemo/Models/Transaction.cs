@@ -7,9 +7,9 @@ namespace APIDemo.Models
         [Key]
         public string Id { get; set; }
 
-        public int? SrcAcc { get; set; }
+        public int SrcAcc { get; set; }
 
-        public int? DestAcc { get; set; }
+        public int DestAcc { get; set; }
 
         public double Amount { get; set; }
 

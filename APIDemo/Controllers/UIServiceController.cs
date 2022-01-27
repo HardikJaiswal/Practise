@@ -52,8 +52,8 @@ namespace APIDemo.Controllers
         [HttpGet("GetUserAccount/id={id}&userType={userType}")]
         public dynamic GetUserAccountRequest(string id,UserType userType)
         {
-            if (id == null || userType == null)
-                return NotFound("Id or type not found");
+            if (id == null) return NotFound("Id not found");
+
             return _service.GetUserAccount(id, userType);
         }
     }

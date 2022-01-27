@@ -50,14 +50,20 @@ namespace APIDemo.Services
                 case UserType.AccounHolder:
                     using (var context = new ApiDemoContext())
                     {
-                        return context.Accounts.FirstOrDefault(a => a.Id == id).Name;
+                        if (context.Accounts.Any(a => a.Id == id))
+                            return context.Accounts.FirstOrDefault(a => a.Id == id)!.Name;
+                        else
+                            return "ID not found.";
                     }
                 case UserType.BankStaff:
                     using (var context = new ApiDemoContext())
                     {
-                        return context.Staffs.FirstOrDefault(a => a.Id == id).Name;
+                        if (context.Staffs.Any(a => a.Id == id))
+                            return context.Staffs.FirstOrDefault(a => a.Id == id)!.Name;
+                        else
+                            return "ID not found.";
                     }
-                default: return null;
+                default: return "Unknown Usertype provided. Please select 0 or 1";
             }
         }
     }
