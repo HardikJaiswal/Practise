@@ -6,8 +6,8 @@ namespace APIDemo.IContracts
     {
         void DepositMoney(int accountNumber, int amount);
 
-        void TransferMoney(int srcAccNum, int destAccNum, double amount, string srcBankId,
-            string destBankId, TransferMode mode);
+        //void TransferMoney(int srcAccNum, int destAccNum, double amount, string srcBankId,
+        //    string destBankId, TransferMode mode);
 
         List<Transaction> GetTransactionHistory(int accountNumber);
 

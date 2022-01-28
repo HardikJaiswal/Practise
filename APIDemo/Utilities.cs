@@ -1,4 +1,4 @@
-﻿namespace APIDemo
+﻿namespace APIDemo.Service
 {
     public class Utilities
     {
@@ -15,6 +15,11 @@
         public static string GeneratePassword()
         {
             return $"PWD{DateTime.Now.Millisecond}";
+        }
+
+        public static int GenerateAccountNumber()
+        {
+            return ((new Random()).Next(0, 100000) % 100000) + 100000;
         }
     }
 }

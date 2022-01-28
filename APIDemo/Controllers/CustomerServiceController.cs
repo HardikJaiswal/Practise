@@ -49,19 +49,19 @@ namespace APIDemo.Controllers
                 return NotFound("AccountNumber not provided");
         }
 
-        [HttpPatch("TranferMoney")]
-        public IActionResult MoneyTransferRequest([FromBody] int srcAcc,[FromBody] int destAcc,[FromBody] string srcBankId
-            ,[FromBody] string destBankId,[FromBody] TransferMode mode,[FromBody] double amount)
-        {
-            if(srcAcc != 0 && destAcc!=0 && srcBankId!=null && destBankId!=null && amount != 0)
-            {
-                _accountHolderService.TransferMoney(srcAcc, destAcc, amount, srcBankId, destBankId, mode);
-                return Ok("Money transferred successfully");
-            }
-            else
-            {
-                return BadRequest("Parameters were not provided correctly.");
-            }
-        }
+        //[HttpPatch("TranferMoney")]
+        //public IActionResult MoneyTransferRequest([FromBody] int srcAcc,[FromBody] int destAcc,[FromBody] string srcBankId
+        //    ,[FromBody] string destBankId,[FromBody] TransferMode mode,[FromBody] double amount)
+        //{
+        //    if(srcAcc != 0 && destAcc!=0 && srcBankId!=null && destBankId!=null && amount != 0)
+        //    {
+        //        _accountHolderService.TransferMoney(srcAcc, destAcc, amount, srcBankId, destBankId, mode);
+        //        return Ok("Money transferred successfully");
+        //    }
+        //    else
+        //    {
+        //        return BadRequest("Parameters were not provided correctly.");
+        //    }
+        //}
     }
 }

@@ -73,45 +73,45 @@ namespace APIDemo.Services
             }
         }
 
-        public void TransferMoney(int srcAccNum,int destAccNum,double amount,string srcBankId,
-            string destBankId,TransferMode mode)
-        {
-            var user1 = GetAccount(srcAccNum);
-            var user2 = GetAccount(destAccNum);
-            if (user1!=null && user2!=null && user1.Amount > amount)
-            {
-                using (var context = new ApiDemoContext()) {
-                    var srcBank = context.Banks.FirstOrDefault(b=>b.Id == srcBankId);
-                    if (srcBank == null) return;
-                    switch (mode)
-                    {
-                        case TransferMode.IMPS:
-                            if (srcBankId.Equals(destBankId)) user1.Amount -= ((100 + srcBank.IntraBankIMPScharges) / 100) * amount;
-                            else user1.Amount -= ((100 + srcBank.InterBankIMPScharges) / 100) * amount;
-                            break;
-                        case TransferMode.RTGS:
-                            if (srcBankId.Equals(destBankId)) user1.Amount -= ((100 + srcBank.IntraBankRTGScharges) / 100) * amount;
-                            else user1.Amount -= ((100 + srcBank.InterBankRTGScharges) / 100) * amount;
-                            break;
-                    }
-                    user2.Amount += amount;
-                    Transaction transaction = new Transaction()
-                    {
-                        Id = Utilities.GenerateTransactionId(),
-                        SrcAcc = srcAccNum,
-                        DestAcc = destAccNum,
-                        TrasanctionType = TransactionType.Transfer,
-                        SrcBankId = srcBankId,
-                        DestBankId = destBankId,
-                        Amount = amount,
-                    };
-                    context.Transactions.Add(transaction);
-                    context.Entry(user1).State = EntityState.Modified;
-                    context.Entry(user2).State = EntityState.Modified;
-                    context.SaveChanges();
-                }
-            }
+        //public void TransferMoney(int srcAccNum,int destAccNum,double amount,string srcBankId,
+        //    string destBankId,TransferMode mode)
+        //{
+        //    var user1 = GetAccount(srcAccNum);
+        //    var user2 = GetAccount(destAccNum);
+        //    if (user1!=null && user2!=null && user1.Amount > amount)
+        //    {
+        //        using (var context = new ApiDemoContext()) {
+        //            var srcBank = context.Banks.FirstOrDefault(b=>b.Id == srcBankId);
+        //            if (srcBank == null) return;
+        //            switch (mode)
+        //            {
+        //                case TransferMode.IMPS:
+        //                    if (srcBankId.Equals(destBankId)) user1.Amount -= ((100 + srcBank.IntraBankIMPScharges) / 100) * amount;
+        //                    else user1.Amount -= ((100 + srcBank.InterBankIMPScharges) / 100) * amount;
+        //                    break;
+        //                case TransferMode.RTGS:
+        //                    if (srcBankId.Equals(destBankId)) user1.Amount -= ((100 + srcBank.IntraBankRTGScharges) / 100) * amount;
+        //                    else user1.Amount -= ((100 + srcBank.InterBankRTGScharges) / 100) * amount;
+        //                    break;
+        //            }
+        //            user2.Amount += amount;
+        //            Transaction transaction = new Transaction()
+        //            {
+        //                Id = Utilities.GenerateTransactionId(),
+        //                SrcAcc = srcAccNum,
+        //                DestAcc = destAccNum,
+        //                TrasanctionType = TransactionType.Transfer,
+        //                SrcBankId = srcBankId,
+        //                DestBankId = destBankId,
+        //                Amount = amount,
+        //            };
+        //            context.Transactions.Add(transaction);
+        //            context.Entry(user1).State = EntityState.Modified;
+        //            context.Entry(user2).State = EntityState.Modified;
+        //            context.SaveChanges();
+        //        }
+        //    }
 
-        }
+       // }
     }
 }
