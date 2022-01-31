@@ -5,6 +5,13 @@ namespace BankAPI.Service
 {
     public class AccountHolderService : IAccountHolderService
     {
+        private readonly ServiceContext _context;
+
+        public AccountHolderService(ServiceContext serviceContext)
+        {
+            _context = serviceContext;
+        }
+
         public ( string Id, string password ) CreateAccount( string name )
         {
             var user = new AccountHolder()
@@ -15,31 +22,27 @@ namespace BankAPI.Service
                 Amount = 0,
                 IsActive = true
             };
-            using ( var context = new ServiceContext() )
-            {
-                int accNum = Utilities.GenerateAccountNumber();
-                while ( context.Accounts!.Any(a => a.AccountNumber == accNum) ) accNum = Utilities.GenerateAccountNumber();
-                user.AccountNumber = accNum;
-                context.Accounts!.Add( user );
-                context.SaveChanges();
-            }
+            
+            int accNum = Utilities.GenerateAccountNumber();
+            while ( _context.Accounts!.Any(a => a.AccountNumber == accNum) ) accNum = Utilities.GenerateAccountNumber();
+            user.AccountNumber = accNum;
+            _context.Accounts!.Add( user );
+            _context.SaveChanges();
+            
             return (user.Id, user.Password );
         }
 
-        public static bool IsAccountPresent ( int accountNumber )
+        public bool IsAccountPresent ( int accountNumber )
         {
-            using ( var context = new ServiceContext() )
-                return context.Accounts!.Any(a => a.AccountNumber == accountNumber);
+            return _context.Accounts!.Any(a => a.AccountNumber == accountNumber);
         }
 
-        public string GetUserAccount ( int accountNumber )
+        public dynamic GetUserAccount ( int accountNumber )
         {
-            using( var context = new ServiceContext())
-            {
-                var user = context.Accounts!.FirstOrDefault( a => a.AccountNumber == accountNumber );
-                if( user == null ) return String.Empty;
-                return user.Name;
-            }
+            var user = _context.Accounts!.FirstOrDefault(a => a.AccountNumber == accountNumber);
+            if (user == null) return Utilities.StatusResponse("Invalid Account Number", false);
+
+            return Utilities.DataResponse<string>("User Name", user.Name);           
         }
     }
 }

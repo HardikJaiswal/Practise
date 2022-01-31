@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BankAPI.IContracts;
-using BankAPI.Models;
+using BankAPI.Service;
 
 namespace BankAPI.Controllers
 {
@@ -16,25 +16,38 @@ namespace BankAPI.Controllers
             _staffService = staffService;
         }
 
-        [HttpPost("AddBank/name={name}&password={password}")]
-        public dynamic AddBankStaffRequest ( string name, string password )
+        [HttpPost("addBank/{name}")]
+        public dynamic AddBankStaffRequest ( string name)
         {
-            if ( name == null || password == null )
+            if ( name == String.Empty)
             {
-                return NotFound("Name or password not provided");
+                return NotFound("Name not provided");
             }
             else
             {
-                return _staffService.AddBankStaff(name, password);
+                try
+                {
+                    return _staffService.AddBankStaff(name);
+                }
+                catch ( Exception ex )
+                {
+                    return Utilities.StatusResponse(ex.Message, false);
+                }
             }
         }
 
-        [HttpGet("GetUserAccount/id={id}&userType={userType}")]
+        [HttpGet("getuseraccount/{id}")]
         public dynamic GetUserAccountRequest ( string id )
         {
-            if ( id == null ) return NotFound("Id not found");
-
-            return _staffService.GetUserAccount(id);
+            if ( id == string.Empty ) return NotFound("Id not found");
+            try
+            {
+                return _staffService.GetUserAccount(id);
+            }
+            catch ( Exception ex )
+            {
+                return Utilities.StatusResponse (ex.Message, false);
+            }
         }
 
     }

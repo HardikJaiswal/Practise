@@ -5,7 +5,7 @@ namespace BankAPI.IContracts
 {
     public interface ICurrencyServie
     {
-        void CreateCurrency(string name, double rate, string bankId);
+        public APIResponse<string> CreateCurrency(Currency currency);
 
         public bool IsCurrencyAvailable(string name);
     }

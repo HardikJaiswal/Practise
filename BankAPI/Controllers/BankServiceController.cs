@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BankAPI.IContracts;
 using BankAPI.Models;
+using BankAPI.Service;
 
 namespace BankAPI.Controllers
 {
@@ -9,63 +10,93 @@ namespace BankAPI.Controllers
     [ApiController]
     public class BankServiceController : ControllerBase
     {
-        IBankService _service;
+        private readonly IBankService _service;
 
-        public BankServiceController ( [FromServices]IBankService service )
+        public BankServiceController ( IBankService service )
         {
             _service = service;
         }
 
         [HttpGet("gettransactions/{accountNumber}")]
-        public dynamic GetTransactionsRequest( int accountNumber )
-        {
-            if ( accountNumber != 0 )
-                return _service.GetTransactionHistory(accountNumber);
-            else
-                return NotFound("Account Number was not provided");
-        }
-
-        //[HttpPatch("TranferMoney")]
-        //public IActionResult MoneyTransferRequest([FromBody] int srcAcc,[FromBody] int destAcc,[FromBody] string srcBankId
-        //    ,[FromBody] string destBankId,[FromBody] TransferMode mode,[FromBody] double amount)
-        //{
-        //    if(srcAcc != 0 && destAcc!=0 && srcBankId!=null && destBankId!=null && amount != 0)
-        //    {
-        //        _accountHolderService.TransferMoney(srcAcc, destAcc, amount, srcBankId, destBankId, mode);
-        //        return Ok("Money transferred successfully");
-        //    }
-        //    else
-        //    {
-        //        return BadRequest("Parameters were not provided correctly.");
-        //    }
-        //}
-
-        [HttpPatch("Withdrawl/accountNumber={accountNumber}&amount={amount}")]
-        public IActionResult MoneyWithdrawlRequest( int accountNumber, int amount )
+        public dynamic GetTransactionsRequest ( int accountNumber )
         {
             if (accountNumber != 0)
             {
-                _service.WithdrawMoney(accountNumber, amount);
-                return Ok("Withdrawl successful");
+                try 
+                {
+                    return _service.GetTransactionHistory(accountNumber);
+                }
+                catch (Exception ex)
+                {
+                    return Utilities.StatusResponse(ex.Message,false);
+                }
+            }
+            else
+            {
+                return NotFound("Account Number was not provided");
+            }
+        }
+
+        [HttpPatch("tranfermoney/{transferMode}")]
+        public dynamic MoneyTransferRequest ( [FromBody] Transaction details,TransferMode transferMode)
+        {
+            if (details.SrcAcc!= 0 && details.DestAcc != 0 && details.SrcBankId != String.Empty
+                && details.DestBankId != String.Empty && details.Amount != 0)
+            {
+                try
+                {
+                    return _service.TransferMoney(details.SrcAcc, details.DestAcc, details.Amount,
+                        details.SrcBankId, details.DestBankId, transferMode);
+                }
+                catch (Exception ex)
+                {
+                    return Utilities.StatusResponse(ex.Message,false);
+                }
+            }
+            else
+            {
+                return BadRequest("Parameters were not provided correctly.");
+            }
+        }
+
+        [HttpPatch("withdrawl/{accountNumber}&{amount}")]
+        public dynamic MoneyWithdrawlRequest ( int accountNumber, int amount )
+        {
+            if (accountNumber != 0)
+            {
+                try
+                {
+                    return _service.WithdrawMoney(accountNumber, amount);
+                }
+                catch(Exception ex)
+                {
+                    return Utilities.StatusResponse(ex.Message,false);
+                }
             }
             else
                 return NotFound("Account Number not provided");
         }
 
-        [HttpPatch("Demposit/accountNumber={accountNumber}&amount={amount}")]
-        public IActionResult MoneyDepositRequest ( int accountNumber, int amount )
+        [HttpPatch("deposit/accountNumber={accountNumber}&amount={amount}")]
+        public dynamic MoneyDepositRequest ( int accountNumber, int amount )
         {
             if ( accountNumber != 0 )
             {
-                _service.DepositMoney(accountNumber, amount);
-                return Ok("Withdrawl successful");
+                try
+                {
+                    return _service.DepositMoney(accountNumber, amount);
+                }
+                catch(Exception ex)
+                {
+                    return Utilities.StatusResponse(ex.Message,false);
+                }
             }
             else
                 return NotFound("AccountNumber not provided");
         }
 
-        [HttpPost("AddBank/{name}")]
-        public IActionResult AddBankRequest ( string name )
+        [HttpPost("addbank/{name}")]
+        public dynamic AddBankRequest ( string name )
         {
             if ( name == null )
             {
@@ -73,17 +104,30 @@ namespace BankAPI.Controllers
             }
             else
             {
-                _service.AddBank(name);
-                return Ok("Bank added successfully.");
+                try
+                {
+                    return _service.AddBank(name);
+                }
+                catch (Exception ex)
+                {
+                    return Utilities.StatusResponse(ex.Message,false);
+                }
             }
         }
 
         [HttpPatch("revertTransfer")]
-        public IActionResult RevertTransferRequest ( [FromBody] Transaction transaction )
+        public dynamic RevertTransferRequest ( [FromBody] Transaction transaction )
         {
-            if (_service.IsTransferReverted(transaction))
+            if( transaction != null)
             {
-                return Ok("Transfer Reverted Successfully.");
+                try
+                {
+                    return _service.RevertTransfer(transaction);
+                }
+                catch( Exception ex)
+                {
+                    return Utilities.StatusResponse(ex.Message,false);
+                }
             }
             else
             {
@@ -92,21 +136,34 @@ namespace BankAPI.Controllers
         }
 
         [HttpPatch("updatestatus/{accountNumber}")]
-        public IActionResult UpdateStatusRequest ( int accountNumber )
+        public dynamic UpdateStatusRequest ( int accountNumber )
         {
-            if (accountNumber != 0)
+            if ( accountNumber != 0 )
             {
-                _service.UpdateAccountStatus(accountNumber);
-                return Ok("Withdrawl successful");
+                try
+                {
+                    return _service.UpdateAccountStatus(accountNumber);
+                }
+                catch ( Exception ex )
+                {
+                    return Utilities.StatusResponse(ex.Message, false);
+                }
             }
             else
                 return NotFound("Account Number not provided");
         }
 
-        [HttpGet("GetBankList")]
-        public List<string> GetBankNamesRequest()
+        [HttpGet("getbanklist")]
+        public dynamic GetBankNamesRequest()
         {
-            return _service.GetBankNames();
+            try
+            {
+                return _service.GetBankNames();
+            }
+            catch ( Exception ex )
+            {
+                return Utilities.StatusResponse(ex.Message, false);
+            }
         }
 
     }

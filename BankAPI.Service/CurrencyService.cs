@@ -1,33 +1,28 @@
-﻿using System;
-using BankAPI.IContracts;
+﻿using BankAPI.IContracts;
 using BankAPI.Models;
 
 namespace BankAPI.Service
 {
     public class CurrencyService : ICurrencyServie
     {
+        private readonly ServiceContext _context;
 
-        public void CreateCurrency ( string name, double rate, string bankId )
+        public CurrencyService ( ServiceContext serviceContext ) 
         {
-            var currency = new Currency()
-            {
-                Name = name,
-                ValueInINR = rate,
-                BankId = bankId
-            };
-            using ( var context = new ServiceContext() )
-            {
-                context.Currencies!.Add(currency);
-                context.SaveChanges();
-            }
+            _context = serviceContext; 
+        }
+
+        public APIResponse<string> CreateCurrency ( Currency currency )
+        {
+            _context.Currencies!.Add(currency);
+            _context.SaveChanges();
+            return Utilities.
+                StatusResponse($"Currency:{currency.Name} with Exchange Rate to INR: Rs.{currency.ValueInINR}", true);
         }
 
         public bool IsCurrencyAvailable ( string name )
         {
-            using ( var context = new ServiceContext() )
-            {
-                return context.Currencies!.Any(t => t.Name == name);
-            }
+            return _context.Currencies!.Any(t => t.Name == name);    
         }
 
     }

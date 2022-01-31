@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BankAPI.Service.Migrations
 {
     [DbContext(typeof(ServiceContext))]
-    [Migration("20220128112626_BankApi")]
-    partial class BankApi
+    [Migration("20220131172408_BankAPI")]
+    partial class BankAPI
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -110,7 +110,7 @@ namespace BankAPI.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Staffs");
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("BankAPI.Models.Currency", b =>

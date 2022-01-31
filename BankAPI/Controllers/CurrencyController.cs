@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using BankAPI.IContracts;
+using BankAPI.Models;
+using BankAPI.Service;
 
 namespace BankAPI.Controllers
 {
@@ -10,34 +12,48 @@ namespace BankAPI.Controllers
     {
         ICurrencyServie _service;
 
-        public CurrencyController ( [FromServices]ICurrencyServie currencyServie )
+        public CurrencyController ( ICurrencyServie currencyServie )
         {
             _service = currencyServie;
         }
 
-        [HttpGet("IsCurrencyAvailable/{name}")]
-        public IActionResult IsCurrencyAvailableRequest ( string name )
+        [HttpGet("iscurrencyavailable/{name}")]
+        public dynamic IsCurrencyAvailableRequest ( string name )
         {
             if ( name != null )
             {
-                return _service.IsCurrencyAvailable(name.Trim().ToLower()) ?
+                try
+                {
+                    return _service.IsCurrencyAvailable(name.Trim().ToLower()) ?
                     Ok("This currency is available") :
                     Ok("This currency is not available");
+                }
+                catch ( Exception ex )
+                {
+                    return Utilities.StatusResponse(ex.Message, false);
+                }
+                
             }
-            else
-                return NotFound("Name of currency not provided.");
+            return NotFound("Name of currency not provided.");
         }
 
-        [HttpPost("AddCurrency/name={name}&rate={rate}&bankId={bankId}")]
-        public dynamic AddCurrencyRequest ( string name, double rate, string bankId )
+        [HttpPost("addcurrency")]
+        public dynamic AddCurrencyRequest ([FromBody]Currency currency)
         {
-            if ( name != null && rate != 0 && !_service.IsCurrencyAvailable(name.Trim().ToLower()) )
+            if ( currency != null )
             {
-                _service.CreateCurrency(name!.Trim().ToLower(), rate, bankId);
-                return Ok($"Currency:{name} with Exchange Rate to INR: Rs.{rate}");
+                currency.Name = currency.Name.Trim().ToLower();
+                try
+                {
+                    if (!_service.IsCurrencyAvailable(currency.Name) && currency.ValueInINR != 0)
+                        return _service.CreateCurrency(currency);
+                }
+                catch(Exception ex)
+                {
+                    return Utilities.StatusResponse(ex.Message, false);
+                }
             }
-            else
-                return NotFound("Complete data was not provided Or Currency is already present.");
+            return NotFound("Complete data was not provided Or Currency is already present.");
         }
     }
 }

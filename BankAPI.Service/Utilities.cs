@@ -6,12 +6,7 @@ namespace BankAPI.Service
     {
         public static string GenerateUserId(string name)
         {
-            return $"{name.Substring(0, 3)}{DateTime.Now}";
-        }
-
-        public static string GenerateTransactionId()
-        {
-            return $"TXN{DateTime.Now}";
+            return $"{name.Substring(0, 3)}{DateTime.Now.Date}";
         }
 
         public static string GeneratePassword()
@@ -29,7 +24,7 @@ namespace BankAPI.Service
         {
             Transaction transaction = new Transaction()
             {
-                Id = GenerateTransactionId(),
+                Id = $"TXN{DateTime.Now.Date}",
                 Amount = amount,
                 SrcAcc = srcAccountNumber,
                 DestAcc = destAccountNumber,
@@ -38,6 +33,28 @@ namespace BankAPI.Service
                 TrasanctionType = transactionType
             };
             return transaction;
+        }
+
+        public static APIResponse<string> StatusResponse(string message, bool isSucessful)
+        {
+            APIResponse<string> response = new APIResponse<string>()
+            {
+                IsSuccess = isSucessful,
+                Message = message,
+                Data = String.Empty
+            };
+            return response;
+        }
+
+        public static APIResponse<T> DataResponse<T>(string message, T data)
+        {
+            APIResponse<T> response = new APIResponse<T>()
+            {
+                Data = data,
+                IsSuccess = true,
+                Message = message
+            };
+            return response;
         }
     }
 }

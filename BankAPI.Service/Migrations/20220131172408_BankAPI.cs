@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BankAPI.Service.Migrations
 {
-    public partial class BankApi : Migration
+    public partial class BankAPI : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -60,7 +60,7 @@ namespace BankAPI.Service.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Staffs",
+                name: "Employees",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
@@ -71,7 +71,7 @@ namespace BankAPI.Service.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Staffs", x => x.Id);
+                    table.PrimaryKey("PK_Employees", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -105,7 +105,7 @@ namespace BankAPI.Service.Migrations
                 name: "Currencies");
 
             migrationBuilder.DropTable(
-                name: "Staffs");
+                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "Transactions");

@@ -4,21 +4,21 @@ namespace BankAPI.IContracts
 {
     public interface IBankService
     {
-        void AddBank(string bankName);
+        APIResponse<string> AddBank(string bankName);
 
-        List<string> GetBankNames();
+        dynamic GetBankNames();
 
-        void DepositMoney(int accountNumber, int amount);
+        APIResponse<string> DepositMoney(int accountNumber, int amount);
 
-        void WithdrawMoney(int accountNumber, int amount);
+        APIResponse<string> WithdrawMoney(int accountNumber, int amount);
 
-        List<Transaction> GetTransactionHistory(int accountNumber);
+        dynamic GetTransactionHistory(int accountNumber);
 
-        void UpdateAccountStatus(int accountNumber);
+        APIResponse<string> UpdateAccountStatus(int accountNumber);
 
-        //void TransferMoney(int srcAccNum, int destAccNum, double amount, string srcBankId,
-        //    string destBankId, TransferMode mode);
+        APIResponse<string> TransferMoney(int srcAccNum, int destAccNum, double amount, string srcBankId,
+            string destBankId, TransferMode mode);
 
-        bool IsTransferReverted(Transaction transaction);
+        APIResponse<string> RevertTransfer(Transaction transaction);
     }
 }

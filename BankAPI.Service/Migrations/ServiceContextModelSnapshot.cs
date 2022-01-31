@@ -108,7 +108,7 @@ namespace BankAPI.Service.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Staffs");
+                    b.ToTable("Employees");
                 });
 
             modelBuilder.Entity("BankAPI.Models.Currency", b =>

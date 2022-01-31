@@ -5,30 +5,34 @@ namespace BankAPI.Service
 {
     public class BankStaffService : IBankStaffService
     {
-        public string AddBankStaff ( string name, string password )
+        private readonly ServiceContext _context;
+
+        public BankStaffService(ServiceContext serviceContext)
+        {
+            _context = serviceContext;
+        }
+
+        public APIResponse<string> AddBankStaff ( string name )
         {
             var user = new BankStaff()
             {
                 Name = name,
-                Password = password,
+                Password = Utilities.GeneratePassword(),
                 Id = Utilities.GenerateUserId(name)
             };
-            using ( var context = new ServiceContext() )
-            {
-                context.Staffs.Add(user);
-                context.SaveChanges(); 
-            }
-            return user.Id;
+            _context.Employees.Add(user);
+            _context.SaveChanges();
+            return Utilities.DataResponse<string>("User ID", user.Id);
         }
 
-        public string GetUserAccount ( string id )
+        public APIResponse<string> GetUserAccount ( string id )
         {
-            using ( var context = new ServiceContext() )
+            var user = _context.Employees.FirstOrDefault(s => s.Id == id);
+            if (user == null)
             {
-                var user = context.Staffs.FirstOrDefault(s => s.Id == id);
-                if (user == null) return null;
-                else return user.Name;
+                return Utilities.StatusResponse("Invalid user ID", false);
             }
+            else return Utilities.DataResponse("User Name", user.Name);
         }
     }
 }

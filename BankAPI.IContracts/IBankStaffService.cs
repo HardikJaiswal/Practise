@@ -1,11 +1,12 @@
-﻿
+﻿using BankAPI.Models;
+
 namespace BankAPI.IContracts
 {
     public interface IBankStaffService
     {
-        string GetUserAccount(string id);
+        APIResponse<string> GetUserAccount(string id);
 
-        string AddBankStaff(string name, string password);
+        APIResponse<string> AddBankStaff(string name);
 
     }
 }
